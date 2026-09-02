@@ -13,9 +13,9 @@ jobs:
 
       - name: Extract project
         run: |
-          unzip -o VibeTube-Cloud-Build.zip -d project
+          unzip VibeTube-Cloud-Build.zip -d project
 
-      - name: Set up Java
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -29,13 +29,16 @@ jobs:
           GRADLEW=$(find project -type f -name gradlew | head -n 1)
 
           if [ -z "$GRADLEW" ]; then
-            echo "ERROR: gradlew not found"
+            echo "ERROR: gradlew tidak ditemukan!"
             exit 1
           fi
 
+          echo "Gradle wrapper found at: $GRADLEW"
+
           chmod +x "$GRADLEW"
 
-          cd "$(dirname "$GRADLEW")"
+          PROJECT_DIR=$(dirname "$GRADLEW")
+          cd "$PROJECT_DIR"
 
           ./gradlew assembleDebug
 
@@ -44,3 +47,4 @@ jobs:
         with:
           name: VibeTube-APK
           path: project/**/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
