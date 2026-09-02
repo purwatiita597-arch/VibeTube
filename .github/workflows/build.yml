@@ -1,3 +1,129 @@
+hari ini 06.25
+Begini lagi lama banget
+
+Error lagi
+
+
+Backup aplikasi(1).zip
+Arsip Zip
+Itu
+
+Ceklis gak
+
+Ini yang mana
+
+Terus setinganya gimana
+
+Terus
+
+Ini yang biru pilih
+
+Itu yang masih di dalam folder di masukin juga
+
+VibeTube-Cloud-Build(1).zip
+Arsip Zip
+Itu 
+
+Ini gak usah di isi
+
+Yang mana
+
+Iya, sudah berhasil ter-upload. File VibeTube-Cloud-Build.zip sudah ada di repository.
+
+Sekarang jangan klik Add README. Langkah berikutnya:
+
+    Tekan tombol + di sebelah tombol Go to file.
+
+    Pilih Create new file.
+
+    Pada nama file, tulis persis:
+
+.github/workflows/build-apk.yml
+
+    Setelah itu saya pandu isi file-nya untuk membuka ZIP otomatis dan membuat APK lewat GitHub.
+
+Kirim screenshot setelah menekan tombol + ya.
+
+Ini gimana
+
+Ini yang mana
+
+
+Yang mana
+
+Terus
+
+Mana
+
+Mana
+
+Yang mana
+
+
+Mana
+
+Yang mana
+
+Ini yang mana
+
+Mana
+
+Mana
+
+
+
+Ini
+
+Terus
+
+Ini gimana
+
+Sudah benar 👍
+
+    Commit message: biarkan Update build.yml
+
+    Pilih “Commit directly to the main branch” seperti yang sudah tercentang
+
+    Lalu tekan tombol hijau “Commit changes” di kanan bawah.
+
+Setelah itu tunggu kembali ke halaman repository, lalu buka Actions → Build APK untuk melihat proses build yang baru.
+
+Ini
+
+Itu artinya ada perubahan lain yang masuk ke repository saat kamu sedang mengedit, jadi GitHub menolak commit untuk mencegah perubahan tertimpa.
+
+Pesan merahnya: “has committed since you started editing.”
+
+Lakukan ini:
+
+    Tekan X di kanan atas kotak ini.
+
+    Jangan langsung commit lagi.
+
+    Muat ulang/reload halaman GitHub.
+
+    Buka lagi file .github/workflows/build.yml.
+
+    Pastikan isi bagian Build APK masih seperti ini:
+
+- name: Build APK
+  run: |
+    GRADLEW=$(find project -type f -name gradlew | head -n 1)
+    echo "Gradle wrapper found at: $GRADLEW"
+    chmod +x "$GRADLEW"
+    cd "$(dirname "$GRADLEW")"
+    ./gradlew assembleDebug
+
+    Kalau sudah, tekan Commit changes… lagi.
+
+Kemungkinan perubahan sebelumnya sudah masuk ke repository. Setelah reload, kita cek dulu supaya tidak mengedit versi lama. Kirim screenshot setelah kamu tekan X dan reload halaman ya.
+
+Salah mulu, coba buatkan semua kodenya nanti saya tinggal tempel yang ini salah
+
+Iya, lebih aman kita hapus semua isi build.yml yang sekarang lalu ganti seluruhnya. Yang sebelumnya salah karena konfigurasi dan struktur folder ZIP bisa membuat gradlew tidak ditemukan.
+
+Tempel seluruh kode ini dari baris pertama sampai terakhir:
+
 name: Build APK
 
 on:
@@ -13,7 +139,7 @@ jobs:
 
       - name: Extract project
         run: |
-          unzip VibeTube-Cloud-Build.zip -d project
+          unzip -o VibeTube-Cloud-Build.zip -d project
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -24,16 +150,58 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Build APK
+      - name: Find and build APK
         run: |
-          GRADLEW=$(find project -type f -name gradlew | head -n 1)
-          echo "Gradle wrapper found at: $GRADLEW"
+          set -e
+
+          echo "Searching for Gradle wrapper..."
+
+          GRADLEW=$(find project -type f -name "gradlew" | head -n 1)
+
+          if [ -z "$GRADLEW" ]; then
+            echo "ERROR: gradlew was not found!"
+            echo "Project files:"
+            find project -maxdepth 3 -type f | head -n 50
+            exit 1
+          fi
+
+          echo "Gradle wrapper found: $GRADLEW"
+
           chmod +x "$GRADLEW"
-          cd "$(dirname "$GRADLEW")"
+
+          PROJECT_DIR=$(dirname "$GRADLEW")
+
+          echo "Building from: $PROJECT_DIR"
+
+          cd "$PROJECT_DIR"
+
           ./gradlew assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: VibeTube-APK
-          path: project/**/app/build/outputs/apk/debug/app-debug.apk
+          path: project/**/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+
+Yang harus dilakukan sekarang
+
+    Di halaman build.yml itu, hapus semua kode lama.
+
+    Tempel kode lengkap di atas.
+
+    Pastikan bagian run: | tetap ada, jangan terhapus.
+
+    Tekan Commit changes...
+
+    Pilih Commit directly to the main branch.
+
+    Tekan tombol hijau Commit changes.
+
+    Setelah berhasil, buka Actions → Build APK → Run workflow.
+
+Kode ini akan mencari gradlew secara otomatis di dalam folder hasil ZIP, jadi lebih aman jika struktur ZIP-nya berbeda dari perkiraan sebelumnya.
+
+Kalau sudah ditempel, kirim screenshot sebelum menekan Commit changes—saya cek dulu apakah seluruh kodenya sudah masuk dengan benar supaya tidak salah lagi.
+
+
