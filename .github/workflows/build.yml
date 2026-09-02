@@ -13,13 +13,13 @@ jobs:
 
       - name: Extract project
         run: |
-          unzip VibeTube-Cloud-Build.zip -d project
+          unzip -o VibeTube-Cloud-Build.zip -d project
 
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "17"
+          java-version: '17'
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
@@ -47,4 +47,3 @@ jobs:
         with:
           name: VibeTube-APK
           path: project/**/app/build/outputs/apk/debug/*.apk
-          if-no-files-found: error
